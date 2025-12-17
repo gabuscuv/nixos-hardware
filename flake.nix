@@ -218,6 +218,8 @@
           lenovo-legion-15ach6h = import ./lenovo/legion/15ach6h;
           lenovo-legion-15ach6h-hybrid = import ./lenovo/legion/15ach6h/hybrid;
           lenovo-legion-15ach6h-nvidia = import ./lenovo/legion/15ach6h/nvidia;
+          lenovo-legion-15ahp10-oled = import ./lenovo/legion/15ahp10/oled;
+          lenovo-legion-15ahp10-ips = import ./lenovo/legion/15ahp10/ips;
           lenovo-legion-15arh05h = import ./lenovo/legion/15arh05h;
           lenovo-legion-16ach6h = import ./lenovo/legion/16ach6h;
           lenovo-legion-16ach6h-hybrid = import ./lenovo/legion/16ach6h/hybrid;
