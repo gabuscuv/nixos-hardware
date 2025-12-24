@@ -5,9 +5,9 @@
 }:
 {
   imports = [
-    ../common.nix
+    ../common_15ahp10.nix
   ];
-
-  # √(2560² + 1600²) px / 15 in ≃ 151 dpi (IPS)
+  
+  # √(1920² + 1200²) px / 15 in ≃ 151 dpi (IPS)
   services.xserver.dpi = 151;
 }
