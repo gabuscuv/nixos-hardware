@@ -19,10 +19,9 @@
   hardware = {
     nvidia = {
       powerManagement.enable = lib.mkDefault true;
-      ## TODO: I need confirm the PCI ids
       prime = {
-        amdgpuBusId = "PCI:00:02:0";
-        nvidiaBusId = "PCI:02:00:0";
+        amdgpuBusId = "PCI:64:00:0";
+        nvidiaBusId = "PCI:01:00:0";
       };
     };
   };
