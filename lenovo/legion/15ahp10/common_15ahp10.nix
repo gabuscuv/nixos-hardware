@@ -6,12 +6,12 @@
 }:
 {
   imports = [
-    ../../../../common/cpu/amd
-    ../../../../common/gpu/nvidia/prime.nix
-    ../../../../common/gpu/nvidia/blackwell
-    ../../../../common/pc/laptop
-    ../../../../common/pc/ssd
-    ../../../../common/hidpi.nix
+    ../../../common/cpu/amd
+    ../../../common/gpu/nvidia/prime.nix
+    ../../../common/gpu/nvidia/blackwell
+    ../../../common/pc/laptop
+    ../../../common/pc/ssd
+    ../../../common/hidpi.nix
   ];
 
   boot.extraModulePackages = [ config.boot.kernelPackages.lenovo-legion-module ];
