@@ -1,13 +1,17 @@
 {
   description = "nixos-hardware";
 
+  inputs.nixpkgs.url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz";
+
   outputs =
-    { self, ... }:
+    { self, nixpkgs, ... }:
     let
       # Import private inputs (for development)
       privateInputs =
         (import ./tests/flake-compat.nix {
-          src = ./tests;
+          src = {
+            outPath = self.outPath + "/tests";
+          };
         }).defaultNix;
 
       systems = [
@@ -23,17 +27,10 @@
       ];
 
       # Helper to iterate over systems
-      eachSystem =
-        f:
-        privateInputs.nixos-unstable-small.lib.genAttrs systems (
-          system: f privateInputs.nixos-unstable-small.legacyPackages.${system} system
-        );
+      eachSystem = f: nixpkgs.lib.genAttrs systems (system: f nixpkgs.legacyPackages.${system} system);
 
       eachSystemFormat =
-        f:
-        privateInputs.nixos-unstable-small.lib.genAttrs formatSystems (
-          system: f privateInputs.nixos-unstable-small.legacyPackages.${system} system
-        );
+        f: nixpkgs.lib.genAttrs formatSystems (system: f nixpkgs.legacyPackages.${system} system);
     in
     {
 
@@ -46,8 +43,10 @@
         in
         {
           acer-aspire-4810t = import ./acer/aspire/4810t;
+          acer-predator-helios-300-ph315-51 = import ./acer/predator/helios/300/ph315-51;
           airis-n990 = import ./airis/n990;
           aoostar-r1-n100 = import ./aoostar/r1/n100;
+          apple-imac-12-2 = import ./apple/imac/12-2;
           apple-imac-14-2 = import ./apple/imac/14-2;
           apple-imac-18-2 = import ./apple/imac/18-2;
           apple-macbook-air-3 = import ./apple/macbook-air/3;
@@ -71,10 +70,15 @@
           asus-fx504gd = import ./asus/fx504gd;
           asus-fx506hm = import ./asus/fx506hm;
           asus-fa506ic = import ./asus/fa506ic;
+          asus-fa506nc = import ./asus/fa506nc;
           asus-fa507nv = import ./asus/fa507nv;
           asus-fa507rm = import ./asus/fa507rm;
+          asus-fa706ic = import ./asus/fa706ic;
           asus-flow-gv302x-amdgpu = import ./asus/flow/gv302x/amdgpu;
           asus-flow-gv302x-nvidia = import ./asus/flow/gv302x/nvidia;
+          asus-flow-gz301vu = import ./asus/flow/gz301vu;
+          asus-proart-px13 = import ./asus/proart/px13;
+          asus-proart-px13-hn7306eac = import ./asus/proart/px13/hn7306eac;
           asus-pro-ws-x570-ace = import ./asus/pro-ws-x570-ace;
           asus-rog-gl552vw = import ./asus/rog-gl552vw;
           asus-rog-strix-g513im = import ./asus/rog-strix/g513im;
@@ -97,6 +101,7 @@
           asus-zephyrus-ga502 = import ./asus/zephyrus/ga502;
           asus-zephyrus-ga503 = import ./asus/zephyrus/ga503;
           asus-zephyrus-gu603h = import ./asus/zephyrus/gu603h;
+          asus-zephyrus-gu605cw = import ./asus/zephyrus/gu605cw;
           asus-zephyrus-gu605my = import ./asus/zephyrus/gu605my;
           beagleboard-pocketbeagle = import ./beagleboard/pocketbeagle;
           chuwi-minibook-x = import ./chuwi/minibook-x;
@@ -122,6 +127,7 @@
           dell-latitude-7490 = import ./dell/latitude/7490;
           dell-latitude-9430 = import ./dell/latitude/9430;
           dell-latitude-e7240 = import ./dell/latitude/e7240;
+          dell-latitude-e7440 = import ./dell/latitude/e7440;
           dell-optiplex-3050 = import ./dell/optiplex/3050;
           dell-poweredge-r7515 = import ./dell/poweredge/r7515;
           dell-precision-3490 = deprecated "1491" "dell-precision-3490" (import ./dell/precision/3490);
@@ -170,6 +176,7 @@
           framework-13th-gen-intel = import ./framework/13-inch/13th-gen-intel;
           framework-12-13th-gen-intel = import ./framework/12-inch/13th-gen-intel;
           framework-intel-core-ultra-series1 = import ./framework/13-inch/intel-core-ultra-series1;
+          framework-intel-core-ultra-series3 = import ./framework/13-inch/intel-core-ultra-series3;
           framework-13-7040-amd = import ./framework/13-inch/7040-amd;
           framework-amd-ai-300-series = import ./framework/13-inch/amd-ai-300-series;
           framework-16-7040-amd = import ./framework/16-inch/7040-amd;
@@ -184,6 +191,8 @@
           gigabyte-b650 = import ./gigabyte/b650;
           gmktec-nucbox-g3-plus = import ./gmktec/nucbox/g3-plus;
           google-pixelbook = import ./google/pixelbook;
+          google-brya = import ./google/brya;
+          google-rex = import ./google/rex;
           gpd-micropc = import ./gpd/micropc;
           gpd-p2-max = import ./gpd/p2-max;
           gpd-pocket-3 = import ./gpd/pocket-3;
@@ -199,10 +208,13 @@
           hp-probook-440G5 = import ./hp/probook/440G5;
           hp-probook-460G11 = import ./hp/probook/460G11;
           hp-laptop-14s-dq2024nf = import ./hp/laptop/14s-dq2024nf;
+          hp-laptop-15s-fq1xxx = import ./hp/laptop/15s-fq1xxx;
           huawei-machc-wa = import ./huawei/machc-wa;
           hp-notebook-14-df0023 = import ./hp/notebook/14-df0023;
           intel-nuc-5i5ryb = import ./intel/nuc/5i5ryb;
+          intel-nuc-7i3bnb = import ./intel/nuc/7i3bnb;
           intel-nuc-8i7beh = import ./intel/nuc/8i7beh;
+          intel-nuc-12wshi7 = import ./intel/nuc/12wshi7;
           lenovo-ideacentre-k330 = import ./lenovo/ideacentre/k330;
           lenovo-ideapad-14imh9 = import ./lenovo/ideapad/14imh9;
           lenovo-ideapad-15alc6 = import ./lenovo/ideapad/15alc6;
@@ -241,6 +253,7 @@
           lenovo-thinkpad-a475 = import ./lenovo/thinkpad/a475;
           lenovo-thinkpad-e14-amd = import ./lenovo/thinkpad/e14/amd;
           lenovo-thinkpad-e14-intel = import ./lenovo/thinkpad/e14/intel;
+          lenovo-thinkpad-e14-intel-gen2 = import ./lenovo/thinkpad/e14/intel/gen2;
           lenovo-thinkpad-e14-intel-gen4 = import ./lenovo/thinkpad/e14/intel/gen4;
           lenovo-thinkpad-e14-intel-gen6 = import ./lenovo/thinkpad/e14/intel/gen6;
           lenovo-thinkpad-e15-intel = import ./lenovo/thinkpad/e15/intel;
@@ -258,13 +271,16 @@
           lenovo-thinkpad-p14s-amd-gen3 = import ./lenovo/thinkpad/p14s/amd/gen3;
           lenovo-thinkpad-p14s-amd-gen4 = import ./lenovo/thinkpad/p14s/amd/gen4;
           lenovo-thinkpad-p14s-amd-gen5 = import ./lenovo/thinkpad/p14s/amd/gen5;
+          lenovo-thinkpad-p14s-amd-gen6 = import ./lenovo/thinkpad/p14s/amd/gen6;
           lenovo-thinkpad-p14s-intel-gen2 = import ./lenovo/thinkpad/p14s/intel/gen2;
           lenovo-thinkpad-p14s-intel-gen3 = import ./lenovo/thinkpad/p14s/intel/gen3;
           lenovo-thinkpad-p14s-intel-gen5 = import ./lenovo/thinkpad/p14s/intel/gen5;
+          lenovo-thinkpad-p15v-intel-gen3 = import ./lenovo/thinkpad/p15v/intel/gen3;
           lenovo-thinkpad-p16s-amd-gen1 = import ./lenovo/thinkpad/p16s/amd/gen1;
           lenovo-thinkpad-p16s-amd-gen2 = import ./lenovo/thinkpad/p16s/amd/gen2;
           lenovo-thinkpad-p16s-amd-gen4 = import ./lenovo/thinkpad/p16s/amd/gen4;
           lenovo-thinkpad-p16s-intel-gen2 = import ./lenovo/thinkpad/p16s/intel/gen2;
+          lenovo-thinkpad-p16s-intel-gen3 = import ./lenovo/thinkpad/p16s/intel/gen3;
           lenovo-thinkpad-p43s = import ./lenovo/thinkpad/p43s;
           lenovo-thinkpad-p50 = import ./lenovo/thinkpad/p50;
           lenovo-thinkpad-p51 = import ./lenovo/thinkpad/p51;
@@ -357,15 +373,21 @@
           microsoft-surface-pro-3 = import ./microsoft/surface-pro/3;
           microsoft-surface-pro-9 = import ./microsoft/surface-pro/9;
           milkv-pioneer = import ./milkv/pioneer;
+          minisforum-um690 = import ./minisforum/um690;
+          minisforum-um690s = import ./minisforum/um690s;
+          minisforum-um790-pro = import ./minisforum/um790-pro;
           minisforum-v3 = import ./minisforum/v3;
           mnt-reform-rk3588 = import ./mnt/reform/rk3588;
           morefine-m600 = import ./morefine/m600;
           msi-b350-tomahawk = import ./msi/b350-tomahawk;
           msi-b550-a-pro = import ./msi/b550-a-pro;
           msi-b550-tomahawk = import ./msi/b550-tomahawk;
+          msi-gf63 = import ./msi/gf63;
           msi-gs60 = import ./msi/gs60;
           msi-gl62 = import ./msi/gl62;
           msi-gl65-10SDR-492 = import ./msi/gl65/10SDR-492;
+          msi-prestige-15-a10sc = import ./msi/prestige/15-a10sc;
+          msi-z370-pc-pro = import ./msi/z370-pc-pro;
           nxp-imx8mp-evk = import ./nxp/imx8mp-evk;
           nxp-imx8mq-evk = import ./nxp/imx8mq-evk;
           nxp-imx8qm-mek = import ./nxp/imx8qm-mek;
@@ -374,6 +396,7 @@
           hardkernel-odroid-hc4 = import ./hardkernel/odroid-hc4;
           hardkernel-odroid-h3 = import ./hardkernel/odroid-h3;
           hardkernel-odroid-h4 = import ./hardkernel/odroid-h4;
+          hardkernel-odroid-m1 = import ./hardkernel/odroid-m1;
           omen-14-fb0798ng = import ./omen/14-fb0798ng;
           omen-15-ce002ns = import ./omen/15-ce002ns;
           omen-15-en0010ca = import ./omen/15-en0010ca;
@@ -391,10 +414,12 @@
           purism-librem-13v3 = import ./purism/librem/13v3;
           purism-librem-15v3 = import ./purism/librem/15v3;
           purism-librem-5r4 = import ./purism/librem/5r4;
+          razer-blade-14-RZ09-0530 = import ./razer/blade/14/RZ09-0530;
           raspberry-pi-2 = import ./raspberry-pi/2;
           raspberry-pi-3 = import ./raspberry-pi/3;
           raspberry-pi-4 = import ./raspberry-pi/4;
           raspberry-pi-5 = import ./raspberry-pi/5;
+          radxa-rock-3c = import ./radxa/rock-3c;
           rock-4c-plus = import ./radxa/rock-4c-plus;
           rock-5b = import ./radxa/rock-5b;
           rock-pi-4 = import ./radxa/rock-pi-4;
@@ -402,6 +427,7 @@
           kobol-helios4 = import ./kobol/helios4;
           samsung-np900x3c = import ./samsung/np900x3c;
           slimbook-hero-rpl-rtx = import ./slimbook/hero/rpl-rtx;
+          spacemit-k3-pico-itx = import ./spacemit/k3-pico-itx;
           starfive-visionfive-v1 = import ./starfive/visionfive/v1;
           starfive-visionfive-2 = import ./starfive/visionfive/v2;
           starlabs-starlite-i5 = import ./starlabs/starlite/i5;
@@ -415,12 +441,16 @@
           system76-galp5-1650 = import ./system76/galp5-1650;
           system76-darp6 = import ./system76/darp6;
           system76-thelio-mega = import ./system76/thelio-mega;
+          system76-galp3 = import ./system76/galp3;
           toshiba-swanky = import ./toshiba/swanky;
           tuxedo-aura-15-gen1 = import ./tuxedo/aura/15/gen1;
           tuxedo-infinitybook-v4 = import ./tuxedo/infinitybook/v4;
           tuxedo-infinitybook-pro14-gen7 = import ./tuxedo/infinitybook/pro14/gen7;
           tuxedo-infinitybook-pro14-gen9-amd = import ./tuxedo/infinitybook/pro14/gen9/amd;
           tuxedo-infinitybook-pro14-gen9-intel = import ./tuxedo/infinitybook/pro14/gen9/intel;
+          tuxedo-infinitybook-pro14-gen10-amd = import ./tuxedo/infinitybook/pro14/gen10/amd;
+          tuxedo-infinitybook-pro15-gen10-amd = import ./tuxedo/infinitybook/pro15/gen10/amd;
+          tuxedo-infinitybook-pro15-gen10-intel = import ./tuxedo/infinitybook/pro15/gen10/intel;
           tuxedo-pulse-14-gen3 = import ./tuxedo/pulse/14/gen3;
           tuxedo-pulse-15-gen2 = import ./tuxedo/pulse/15/gen2;
           xiaomi-redmibook-15-pro-2021 = import ./xiaomi/redmibook/15-pro-2021;
@@ -474,6 +504,8 @@
           run-tests = pkgs.callPackage ./tests/run-tests.nix {
             inherit self;
           };
+
+          mnt-reform-kernel-patches = pkgs.callPackage ./mnt/reform/updateKernelPatches.nix { };
         }
         // pkgs.lib.optionalAttrs (system == "aarch64-linux") {
           # Boot images for NXP i.MX boards (aarch64-linux only)
@@ -481,8 +513,29 @@
           imx93-boot = (pkgs.callPackage ./nxp/imx93-evk/bsp/imx93-boot.nix { }).imx93-boot;
           imx8mp-boot = (pkgs.callPackage ./nxp/imx8mp-evk/bsp/imx8mp-boot.nix { }).imx8m-boot;
           imx8mq-boot = (pkgs.callPackage ./nxp/imx8mq-evk/bsp/imx8mq-boot.nix { }).imx8m-boot;
+          purism-librem-5r4-uboot = pkgs.callPackage ./purism/librem/5r4/u-boot { };
+          # Raspberry Pi kernels (aarch64-linux only)
+          rpi2-kernel = (pkgs.callPackage ./raspberry-pi/common/kernel.nix { rpiVersion = 2; });
+          rpi3-kernel = (pkgs.callPackage ./raspberry-pi/common/kernel.nix { rpiVersion = 3; });
+          rpi4-kernel = (pkgs.callPackage ./raspberry-pi/common/kernel.nix { rpiVersion = 4; });
+          rpi5-kernel = (pkgs.callPackage ./raspberry-pi/common/kernel.nix { rpiVersion = 5; });
         }
       );
+
+      # Hydra jobset for Raspberry Pi kernels
+      hydraJobs = {
+        raspberry-pi-kernels = eachSystem (
+          pkgs: system:
+          pkgs.lib.optionalAttrs (system == "aarch64-linux") {
+            inherit (self.packages.${system})
+              rpi2-kernel
+              rpi3-kernel
+              rpi4-kernel
+              rpi5-kernel
+              ;
+          }
+        );
+      };
 
       # Add checks for `nix run .#run-tests`
       checks = eachSystem (
